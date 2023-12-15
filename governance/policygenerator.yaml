@@ -1,0 +1,80 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: policygenerator-config
+policyDefaults:
+  namespace: acm-policies
+  copyPolicyMetadata: false
+  placement:
+    name: "default-placement"   
+    placementRulePath: input/placement-default.yaml
+placementBindingDefaults:
+  name: default-placement-binding
+policySets:
+  - name: cluster-health
+    description: Policies related to cluster health
+policies:
+  - name: node-availability
+    manifests:
+      - path: policy-generator-policies/node-availability.yaml
+    remediationAction: "inform"
+    severity: "high"
+    complianceType: "mustnothave"
+    evaluationInterval:
+      compliant: 6h
+      noncompliant: 600s  
+    policySets:
+      - cluster-health
+  # - name: cluster-operator-health
+  #   manifests:
+  #     - path: policy-generator-policies/cluster-operator-health.yaml
+  #   remediationAction: "inform"
+  #   severity: "high"
+  #   complianceType: "mustnothave"
+  #   policySets:
+  #     - cluster-health
+  # - name: namespace-terminating
+  #   manifests:
+  #     - path: policy-generator-policies/namespace-terminating.yaml
+  #   remediationAction: "inform"
+  #   severity: "low"
+  #   namespaceSelector:
+  #     exclude:
+  #       - "kube-*"
+  #     include:
+  #       - "*"
+  #   complianceType: "mustnothave"
+  #   policySets:
+  #     - cluster-health
+  # - name: certificate-expiration-within-90-days
+  #   manifests:
+  #     - path: policy-generator-policies/certificate-expiration-within-90-days.yaml
+  #   remediationAction: "inform"
+  #   severity: "high"
+  #   namespaceSelector:
+  #     exclude:
+  #       - "kube-*"
+  #     include:
+  #       - "*"
+  #   complianceType: "mustnothave"
+  #   policySets:
+  #     - cluster-health
+  # - name: pod-terminating
+  #   manifests:
+  #     - path: policy-generator-policies/pod-terminating.yaml
+  #   remediationAction: inform
+  #   severity: "high"
+  #   namespaceSelector:
+  #     include:
+  #       - "*"
+  #   complianceType: "mustnothave" # "musthave" or "mustnothave" or "mustonlyhave"
+  #   policySets:
+  #     - cluster-health
+  # - name: web-terminal
+  #   manifests:
+  #     - path: policy-generator-policies/web-terminal.yaml
+  #   remediationAction: "enforce"
+  #   severity: "low"
+  #   complianceType: "musthave"
+  #   policySets:
+  #     - cluster-health
